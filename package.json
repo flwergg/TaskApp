@@ -1,7 +1,7 @@
 {
   "name": "taskapp",
   "version": "1.0.0",
-  "description": "App sencilla para pruebas E2E con Cypress",
+  "description": "Aplicación estable para pruebas E2E con Cypress",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

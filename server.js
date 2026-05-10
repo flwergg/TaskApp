@@ -5,7 +5,7 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.static('public'));
 
-// --- Datos en memoria (intencional) ---
+// Datos en memoria (intencional para el taller)
 let tasks = [];
 let loggedIn = false;
 
@@ -13,7 +13,7 @@ let loggedIn = false;
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
 
-  // Validación débil a propósito
+  // Validación mínima (intencionalmente débil)
   if (email && password) {
     loggedIn = true;
     res.json({ success: true });
@@ -22,16 +22,16 @@ app.post('/login', (req, res) => {
   }
 });
 
-// --- Middleware de autenticación ---
-app.use((req, res, next) => {
-  if (!loggedIn && req.path !== '/login') {
+// --- Middleware de autenticación (solo para la API) ---
+function authMiddleware(req, res, next) {
+  if (!loggedIn) {
     return res.status(403).json({ message: 'No autorizado' });
   }
   next();
-});
+}
 
 // --- Crear tarea ---
-app.post('/tasks', (req, res) => {
+app.post('/tasks', authMiddleware, (req, res) => {
   const { title } = req.body;
 
   if (!title) {
@@ -43,11 +43,11 @@ app.post('/tasks', (req, res) => {
 });
 
 // --- Listar tareas ---
-app.get('/tasks', (req, res) => {
+app.get('/tasks', authMiddleware, (req, res) => {
   res.json(tasks);
 });
 
 // --- Servidor ---
 app.listen(PORT, () => {
-  console.log(`Servidor ejecutándose en puerto ${PORT}`);
+  console.log(`TaskApp ejecutándose en http://localhost:${PORT}`);
 });

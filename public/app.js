@@ -7,8 +7,11 @@ function login() {
       password: document.getElementById('password').value
     })
   })
-  .then(res => res.json())
-  .then(() => {
+  .then(res => {
+    if (!res.ok) {
+      alert('Error de login');
+      return;
+    }
     document.getElementById('login').style.display = 'none';
     document.getElementById('tasks').style.display = 'block';
     loadTasks();
@@ -23,7 +26,14 @@ function createTask() {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ title })
   })
-  .then(() => loadTasks());
+  .then(res => {
+    if (!res.ok) {
+      alert('Error al crear la tarea');
+      return;
+    }
+    document.getElementById('taskTitle').value = '';
+    loadTasks();
+  });
 }
 
 function loadTasks() {
@@ -32,9 +42,9 @@ function loadTasks() {
     .then(tasks => {
       const list = document.getElementById('taskList');
       list.innerHTML = '';
-      tasks.forEach(t => {
+      tasks.forEach(task => {
         const li = document.createElement('li');
-        li.textContent = t;
+        li.textContent = task;
         list.appendChild(li);
       });
     });
